@@ -38,3 +38,11 @@ const plan = createFollowupPlan(notesText);
 
 ## Safety Notes
 The skill is intentionally dry-run only. Output that mentions sending email, posting, scheduling, or updating a CRM is an approval-gated recommendation, not an action.
+
+## Package contents
+
+The npm package allowlist includes the runtime files plus the public support
+documents needed for release review: `README.md`, `LICENSE`, `SKILL.md`.
+Run `npm run package:smoke` or `npm pack --dry-run` before publishing to
+confirm those files are still present in the tarball.
+
