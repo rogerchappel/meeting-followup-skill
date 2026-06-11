@@ -1,0 +1,26 @@
+{
+  "name": "meeting-followup-skill",
+  "version": "0.1.0",
+  "description": "Local-first agent skill for safe meeting follow-up drafts and action registers",
+  "type": "module",
+  "bin": {
+    "meeting-followup-skill": "./bin/meeting-followup-skill.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node scripts/check.js",
+    "build": "node scripts/build.js",
+    "smoke": "node bin/meeting-followup-skill.js plan --input fixtures/customer-sync.md --format md"
+  },
+  "keywords": [
+    "agent-skill",
+    "meetings",
+    "follow-up",
+    "crm",
+    "dry-run"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
+}
