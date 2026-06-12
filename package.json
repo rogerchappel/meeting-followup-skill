@@ -32,7 +32,10 @@
     "docs",
     "README.md",
     "LICENSE",
-    "SKILL.md"
+    "SKILL.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "CONTRIBUTING.md"
   ],
   "repository": {
     "type": "git",

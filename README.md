@@ -6,7 +6,11 @@ Local-first CLI and library for converting meeting notes into safe follow-up dra
 
 ```bash
 npm test
+npm run check
+npm run build
 npm run smoke
+npm run package:smoke
+npm run release:check
 node bin/meeting-followup-skill.js plan --input fixtures/customer-sync.md --format md
 ```
 
@@ -42,7 +46,7 @@ The skill is intentionally dry-run only. Output that mentions sending email, pos
 ## Package contents
 
 The npm package allowlist includes the runtime files plus the public support
-documents needed for release review: `README.md`, `LICENSE`, `SKILL.md`.
+documents needed for release review: `README.md`, `LICENSE`, `SKILL.md`,
+`CHANGELOG.md`, `SECURITY.md`, and `CONTRIBUTING.md`.
 Run `npm run package:smoke` or `npm pack --dry-run` before publishing to
 confirm those files are still present in the tarball.
-
