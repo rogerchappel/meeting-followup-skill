@@ -48,5 +48,6 @@ The skill is intentionally dry-run only. Output that mentions sending email, pos
 The npm package allowlist includes the runtime files plus the public support
 documents needed for release review: `README.md`, `LICENSE`, `SKILL.md`,
 `CHANGELOG.md`, `SECURITY.md`, and `CONTRIBUTING.md`.
-Run `npm run package:smoke` or `npm pack --dry-run` before publishing to
-confirm those files are still present in the tarball.
+Run `npm run package:smoke` before publishing to confirm the CLI, runtime
+modules, fixtures, and public support files are still present in the dry-run
+tarball.
