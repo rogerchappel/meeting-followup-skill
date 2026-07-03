@@ -7,6 +7,7 @@ Local-first CLI and library for converting meeting notes into safe follow-up dra
 ```bash
 npm test
 npm run check
+npm run lint
 npm run build
 npm run smoke
 npm run package:smoke
@@ -51,3 +52,6 @@ documents needed for release review: `README.md`, `LICENSE`, `SKILL.md`,
 Run `npm run package:smoke` before publishing to confirm the CLI, runtime
 modules, fixtures, and public support files are still present in the dry-run
 tarball.
+
+`npm run lint` is the stable contributor alias for the release gate's static
+package checks.
