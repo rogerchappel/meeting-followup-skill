@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Local-first agent skill for safe meeting follow-up drafts and action registers",
   "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
   "bin": {
     "meeting-followup-skill": "./bin/meeting-followup-skill.js"
   },
