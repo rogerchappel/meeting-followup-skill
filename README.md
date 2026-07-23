@@ -50,8 +50,9 @@ The npm package allowlist includes the runtime files plus the public support
 documents needed for release review: `README.md`, `LICENSE`, `SKILL.md`,
 `CHANGELOG.md`, `SECURITY.md`, and `CONTRIBUTING.md`.
 Run `npm run package:smoke` before publishing to confirm the CLI, runtime
-modules, fixtures, and public support files are still present in the dry-run
-tarball.
+modules, fixtures, and public support files are present in the tarball and
+that both the package-root library import and installed CLI work in a clean
+consumer project.
 
 `npm run lint` is the stable contributor alias for the release gate's static
 package checks.
