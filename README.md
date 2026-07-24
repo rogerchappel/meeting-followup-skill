@@ -21,7 +21,12 @@ node bin/meeting-followup-skill.js plan --input fixtures/customer-sync.md --form
 meeting-followup-skill validate --input notes.md
 meeting-followup-skill plan --input notes.md --format json
 meeting-followup-skill plan --input notes.md --format md
+meeting-followup-skill --help
 ```
+
+`--input` requires a readable file. `--format` accepts `json` (the default) or
+`md`. The CLI exits with status 2 for command or option usage errors, 3 when
+the input cannot be read, and 1 when `validate` finds a blocker.
 
 ## Library
 
