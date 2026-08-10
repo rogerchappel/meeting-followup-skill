@@ -8,14 +8,31 @@ const failUsage = message => {
   console.error(message);
   process.exit(2);
 };
-const getArg = (name, fallback = null) => {
-  const index = args.indexOf(name);
-  if (index === -1) return fallback;
-  const value = args[index + 1];
-  if (!value || value.startsWith('--')) {
-    failUsage(`Option ${name} requires a value.`);
+const parseOptions = values => {
+  const options = new Map();
+  const knownOptions = new Set(['--input', '--format']);
+
+  for (let index = 0; index < values.length; index += 1) {
+    const name = values[index];
+    if (!name.startsWith('--')) {
+      failUsage(`Unexpected argument: ${name}.`);
+    }
+    if (!knownOptions.has(name)) {
+      failUsage(`Unknown option: ${name}.`);
+    }
+    if (options.has(name)) {
+      failUsage(`Duplicate option: ${name}.`);
+    }
+
+    const value = values[index + 1];
+    if (!value || value.startsWith('--')) {
+      failUsage(`Option ${name} requires a value.`);
+    }
+    options.set(name, value);
+    index += 1;
   }
-  return value;
+
+  return options;
 };
 
 if (command === 'help' || args.includes('--help')) {
@@ -27,12 +44,13 @@ if (command !== 'plan' && command !== 'validate') {
   failUsage(`Unknown command: ${command}`);
 }
 
-const input = getArg('--input');
+const options = parseOptions(args.slice(1));
+const input = options.get('--input');
 if (!input) {
   failUsage('Missing required option --input.');
 }
 
-const format = getArg('--format', 'json');
+const format = options.get('--format') || 'json';
 if (format !== 'json' && format !== 'md') {
   failUsage(`Unsupported format "${format}". Expected json or md.`);
 }
