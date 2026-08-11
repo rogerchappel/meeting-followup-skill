@@ -42,6 +42,35 @@ test('rejects missing and unsupported format values', () => {
   assert.equal(unsupported.stderr, 'Unsupported format "yaml". Expected json or md.\n');
 });
 
+test('rejects unknown options and stray positional arguments without plan output', () => {
+  for (const args of [
+    ['plan', '--input', 'fixtures/customer-sync.md', '--bogus', 'value'],
+    ['validate', '--input', 'fixtures/customer-sync.md', '--bogus'],
+    ['plan', '--input', 'fixtures/customer-sync.md', 'extra'],
+    ['validate', '--input', 'fixtures/customer-sync.md', 'extra']
+  ]) {
+    const result = runCli(...args);
+
+    assert.equal(result.status, 2);
+    assert.equal(result.stdout, '');
+    assert.match(result.stderr, /^(Unknown option: --bogus|Unexpected argument: (value|extra))\.\n$/);
+  }
+});
+
+test('rejects duplicate known options instead of choosing one value', () => {
+  for (const [option, args] of [
+    ['--input', ['plan', '--input', 'fixtures/customer-sync.md', '--input', 'fixtures/unsafe-notes.md']],
+    ['--format', ['plan', '--input', 'fixtures/customer-sync.md', '--format', 'json', '--format', 'md']],
+    ['--input', ['validate', '--input', 'fixtures/customer-sync.md', '--input', 'fixtures/unsafe-notes.md']]
+  ]) {
+    const result = runCli(...args);
+
+    assert.equal(result.status, 2);
+    assert.equal(result.stdout, '');
+    assert.equal(result.stderr, `Duplicate option: ${option}.\n`);
+  }
+});
+
 test('plans successfully in documented JSON and Markdown formats', () => {
   const json = runCli('plan', '--input', 'fixtures/customer-sync.md', '--format', 'json');
   assert.equal(json.status, 0);

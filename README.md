@@ -25,8 +25,10 @@ meeting-followup-skill --help
 ```
 
 `--input` requires a readable file. `--format` accepts `json` (the default) or
-`md`. The CLI exits with status 2 for command or option usage errors, 3 when
-the input cannot be read, and 1 when `validate` finds a blocker.
+`md`. Unknown options, extra positional arguments, and duplicate options are
+usage errors; the CLI rejects them instead of producing plan output. It exits
+with status 2 for command or option usage errors, 3 when the input cannot be
+read, and 1 when `validate` finds a blocker.
 
 ## Library
 
