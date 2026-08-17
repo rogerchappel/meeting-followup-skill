@@ -37,8 +37,8 @@ function buildChecklist(meeting, safety) {
   return [
     { item: 'Confirm attendee list', done: meeting.attendees.length > 0 },
     { item: 'Confirm decisions are accurate', done: meeting.decisions.length > 0 },
-    { item: 'Assign every action item to an owner', done: meeting.actions.every(action => action.owner) },
-    { item: 'Confirm due dates for action items', done: meeting.actions.every(action => action.due) },
+    { item: 'Assign every action item to an owner', done: meeting.actions.length > 0 && meeting.actions.every(action => action.owner) },
+    { item: 'Confirm due dates for action items', done: meeting.actions.length > 0 && meeting.actions.every(action => action.due) },
     { item: 'Get approval before external sends or CRM writes', done: !safety.some(f => f.level === 'approval') }
   ];
 }
