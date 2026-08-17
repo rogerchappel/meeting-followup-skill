@@ -45,6 +45,7 @@ const plan = createFollowupPlan(notesText);
 
 ## Limitations
 - Heuristic parser for lightweight notes, not a full transcript understanding model.
+- Action due dates support `YYYY-MM-DD`, `today`, `tomorrow`, and `next week`; impossible calendar dates are treated as missing.
 - No live integrations and no external writes.
 - Human review is required before sending or logging anything.
 

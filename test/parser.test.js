@@ -11,3 +11,13 @@ test('parses attendees decisions and actions', () => {
   assert.equal(meeting.actions[0].owner, 'Mina');
   assert.equal(meeting.actions[0].due, '2026-06-14');
 });
+
+test('retains supported relative action dates', () => {
+  const meeting = parseMeetingNotes('# Sync\n## Actions\n- Mina: send recap due tomorrow\n- Jay: review due next week');
+  assert.deepEqual(meeting.actions.map(action => action.due), ['tomorrow', 'next week']);
+});
+
+test('represents impossible calendar dates as missing', () => {
+  const meeting = parseMeetingNotes('# Sync\n## Actions\n- Mina: send recap due 2026-02-29\n- Jay: review due 2026-13-01');
+  assert.deepEqual(meeting.actions.map(action => action.due), [null, null]);
+});

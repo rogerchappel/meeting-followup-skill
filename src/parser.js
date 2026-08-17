@@ -30,9 +30,16 @@ function cleanBullet(value) { return String(value || '').replace(/^[-*]\s*/, '')
 
 export function parseAction(line) {
   const text = cleanBullet(String(line).replace(/^- \[[ xX]\]\s*/, '').replace(/^action:/i, ''));
-  const due = (text.match(/\bdue[: ]+(\d{4}-\d{2}-\d{2}|next week|tomorrow|today)\b/i) || [])[1] || null;
+  const dueValue = (text.match(/\bdue[: ]+(\d{4}-\d{2}-\d{2}|next week|tomorrow|today)\b/i) || [])[1] || null;
+  const due = dueValue && (!/^\d{4}-\d{2}-\d{2}$/.test(dueValue) || isCalendarDate(dueValue)) ? dueValue : null;
   const ownerMatch = text.match(/^([^:]+):\s+(.+)$/);
   const owner = ownerMatch ? ownerMatch[1].trim() : null;
   const task = ownerMatch ? ownerMatch[2].replace(/\bdue[: ].*$/i, '').trim() : text.replace(/\bdue[: ].*$/i, '').trim();
   return { owner, task, due };
+}
+
+function isCalendarDate(value) {
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
 }
