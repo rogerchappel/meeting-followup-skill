@@ -5,6 +5,7 @@ Local-first CLI and library for converting meeting notes into safe follow-up dra
 ## Quickstart
 
 ```bash
+npm ci
 npm test
 npm run check
 npm run lint
@@ -14,6 +15,10 @@ npm run package:smoke
 npm run release:check
 node bin/meeting-followup-skill.js plan --input fixtures/customer-sync.md --format md
 ```
+
+Use `npm ci` from a fresh checkout to install exactly the dependency metadata
+committed in `package-lock.json`. The repository check fails when the root
+package metadata and lockfile drift apart.
 
 ## CLI
 
