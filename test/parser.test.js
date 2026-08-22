@@ -21,3 +21,33 @@ test('represents impossible calendar dates as missing', () => {
   const meeting = parseMeetingNotes('# Sync\n## Actions\n- Mina: send recap due 2026-02-29\n- Jay: review due 2026-13-01');
   assert.deepEqual(meeting.actions.map(action => action.due), [null, null]);
 });
+
+test('parses attendee section bullets without leaking them into notes', () => {
+  const meeting = parseMeetingNotes(`# Weekly Sync
+## Attendees
+- Sam
+* Lee
+## Decisions
+- Keep the Friday release
+## Actions
+- [ ] Sam: send recap due tomorrow`);
+
+  assert.deepEqual(meeting.attendees, ['Sam', 'Lee']);
+  assert.deepEqual(meeting.notes, []);
+  assert.deepEqual(meeting.decisions, ['Keep the Friday release']);
+  assert.deepEqual(meeting.actions, [{ owner: 'Sam', task: 'send recap', due: 'tomorrow' }]);
+});
+
+test('supports Participants headings and deduplicates inline attendees', () => {
+  const meeting = parseMeetingNotes(`# Planning
+Attendees: Sam, Lee; Sam
+## Participants
+- Lee
+- Priya
+## Questions
+- Is Friday still available?`);
+
+  assert.deepEqual(meeting.attendees, ['Sam', 'Lee', 'Priya']);
+  assert.deepEqual(meeting.questions, ['Is Friday still available?']);
+  assert.deepEqual(meeting.notes, []);
+});

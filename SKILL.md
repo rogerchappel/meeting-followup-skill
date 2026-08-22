@@ -18,6 +18,9 @@ Use this skill when an agent needs to turn meeting notes, transcript excerpts, o
 ## Workflow
 1. Run validation on the notes file.
    Action due dates may use `YYYY-MM-DD`, `today`, `tomorrow`, or `next week`; impossible calendar dates are reported as missing.
+   Attendees may be written inline (`Attendees: Mina, Jay`) or as `-`/`*`
+   bullets under an `Attendees` or `Participants` heading; duplicates are
+   collapsed.
 2. Review blockers, warnings, and approval findings.
 3. Generate the draft plan in markdown or JSON.
 4. Ask the user to confirm factual accuracy and approve any external send or write.

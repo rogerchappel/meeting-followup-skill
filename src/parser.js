@@ -12,11 +12,12 @@ export function parseMeetingNotes(text) {
       section = label.toLowerCase();
       continue;
     }
-    if (/^attendees?:/i.test(line)) {
-      meeting.attendees.push(...line.replace(/^attendees?:/i, '').split(/[,;]/).map(x => x.trim()).filter(Boolean));
+    if (/^(?:attendees?|participants?):/i.test(line)) {
+      meeting.attendees.push(...line.replace(/^(?:attendees?|participants?):/i, '').split(/[,;]/).map(x => x.trim()).filter(Boolean));
       continue;
     }
-    if (/^decision:/i.test(line) || section.includes('decision')) meeting.decisions.push(cleanBullet(line.replace(/^decision:/i, '')));
+    if (isAttendeeSection(section) && /^[-*]\s+/.test(line)) meeting.attendees.push(cleanBullet(line));
+    else if (/^decision:/i.test(line) || section.includes('decision')) meeting.decisions.push(cleanBullet(line.replace(/^decision:/i, '')));
     else if (/^risk:/i.test(line) || section.includes('risk')) meeting.risks.push(cleanBullet(line.replace(/^risk:/i, '')));
     else if (/^question:/i.test(line) || section.includes('question')) meeting.questions.push(cleanBullet(line.replace(/^question:/i, '')));
     else if (/^- \[[ xX]\]/.test(line) || /^action:/i.test(line) || section.includes('action')) meeting.actions.push(parseAction(line));
@@ -24,6 +25,10 @@ export function parseMeetingNotes(text) {
   }
   meeting.attendees = [...new Set(meeting.attendees)];
   return meeting;
+}
+
+function isAttendeeSection(section) {
+  return /^(?:attendees?|participants?)$/.test(section);
 }
 
 function cleanBullet(value) { return String(value || '').replace(/^[-*]\s*/, '').trim(); }

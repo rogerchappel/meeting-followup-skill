@@ -81,6 +81,17 @@ test('plans successfully in documented JSON and Markdown formats', () => {
   assert.match(markdown.stdout, /^# Customer Sync/);
 });
 
+test('includes attendee section bullets in JSON and Markdown plans', () => {
+  const json = runCli('plan', '--input', 'fixtures/attendee-sections.md', '--format', 'json');
+  assert.equal(json.status, 0);
+  assert.deepEqual(JSON.parse(json.stdout).meeting.attendees, ['Sam', 'Lee', 'Priya']);
+
+  const markdown = runCli('plan', '--input', 'fixtures/attendee-sections.md', '--format', 'md');
+  assert.equal(markdown.status, 0);
+  assert.match(markdown.stdout, /Hi Sam, Lee, Priya,/);
+  assert.match(markdown.stdout, /Attendees: Sam, Lee, Priya/);
+});
+
 test('validates safe and blocked input with stable statuses', () => {
   const safe = runCli('validate', '--input', 'fixtures/customer-sync.md');
   assert.equal(safe.status, 0);
