@@ -42,6 +42,12 @@ import { createFollowupPlan } from 'meeting-followup-skill';
 const plan = createFollowupPlan(notesText);
 ```
 
+The parser accepts comma- or semicolon-separated inline attendee fields such
+as `Attendees: Mina, Jay`, and Markdown bullets beneath an `Attendees` or
+`Participants` heading. Repeated names are included once. Starting another
+heading ends the attendee section, so later decisions and actions retain their
+own classifications.
+
 ## What It Produces
 - Follow-up email draft.
 - CRM note draft.
@@ -50,6 +56,7 @@ const plan = createFollowupPlan(notesText);
 
 ## Limitations
 - Heuristic parser for lightweight notes, not a full transcript understanding model.
+- Attendee section entries must use `-` or `*` Markdown bullets.
 - Action due dates support `YYYY-MM-DD`, `today`, `tomorrow`, and `next week`; impossible calendar dates are treated as missing.
 - No live integrations and no external writes.
 - Human review is required before sending or logging anything.
