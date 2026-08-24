@@ -35,11 +35,16 @@ function cleanBullet(value) { return String(value || '').replace(/^[-*]\s*/, '')
 
 export function parseAction(line) {
   const text = cleanBullet(String(line).replace(/^- \[[ xX]\]\s*/, '').replace(/^action:/i, ''));
-  const dueValue = (text.match(/\bdue[: ]+(\d{4}-\d{2}-\d{2}|next week|tomorrow|today)\b/i) || [])[1] || null;
+  const dueMatch = text.match(/\bdue[: ]+(\d{4}-\d{2}-\d{2}|next week|tomorrow|today)\b/i);
+  const dueValue = dueMatch?.[1] || null;
   const due = dueValue && (!/^\d{4}-\d{2}-\d{2}$/.test(dueValue) || isCalendarDate(dueValue)) ? dueValue : null;
   const ownerMatch = text.match(/^([^:]+):\s+(.+)$/);
   const owner = ownerMatch ? ownerMatch[1].trim() : null;
-  const task = ownerMatch ? ownerMatch[2].replace(/\bdue[: ].*$/i, '').trim() : text.replace(/\bdue[: ].*$/i, '').trim();
+  const taskText = ownerMatch ? ownerMatch[2] : text;
+  const taskDueMatch = taskText.match(/\bdue[: ]+(\d{4}-\d{2}-\d{2}|next week|tomorrow|today)\b/i);
+  const task = due && taskDueMatch
+    ? `${taskText.slice(0, taskDueMatch.index).trimEnd()} ${taskText.slice(taskDueMatch.index + taskDueMatch[0].length).trimStart()}`.trim()
+    : taskText.trim();
   return { owner, task, due };
 }
 
