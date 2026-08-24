@@ -17,6 +17,16 @@ test('retains supported relative action dates', () => {
   assert.deepEqual(meeting.actions.map(action => action.due), ['tomorrow', 'next week']);
 });
 
+test('preserves task wording that merely contains due', () => {
+  const meeting = parseMeetingNotes('# Sync\n## Actions\n- Mina: complete due diligence report');
+  assert.deepEqual(meeting.actions, [{ owner: 'Mina', task: 'complete due diligence report', due: null }]);
+});
+
+test('removes only the recognized due clause from task wording', () => {
+  const meeting = parseMeetingNotes('# Sync\n## Actions\n- Mina: send recap due tomorrow after legal approval');
+  assert.deepEqual(meeting.actions, [{ owner: 'Mina', task: 'send recap after legal approval', due: 'tomorrow' }]);
+});
+
 test('represents impossible calendar dates as missing', () => {
   const meeting = parseMeetingNotes('# Sync\n## Actions\n- Mina: send recap due 2026-02-29\n- Jay: review due 2026-13-01');
   assert.deepEqual(meeting.actions.map(action => action.due), [null, null]);
