@@ -58,6 +58,7 @@ own classifications.
 - Heuristic parser for lightweight notes, not a full transcript understanding model.
 - Attendee section entries must use `-` or `*` Markdown bullets.
 - Action due dates support `YYYY-MM-DD`, `today`, `tomorrow`, and `next week`; impossible calendar dates are treated as missing.
+- A valid `due <value>` clause is removed from the action text after its due date is parsed, while text before and after the clause is retained. Other uses of `due`, such as `due diligence`, remain part of the task.
 - No live integrations and no external writes.
 - Human review is required before sending or logging anything.
 
