@@ -17,10 +17,10 @@ export function parseMeetingNotes(text) {
       continue;
     }
     if (isAttendeeSection(section) && /^[-*]\s+/.test(line)) meeting.attendees.push(cleanBullet(line));
-    else if (/^decision:/i.test(line) || section.includes('decision')) meeting.decisions.push(cleanBullet(line.replace(/^decision:/i, '')));
-    else if (/^risk:/i.test(line) || section.includes('risk')) meeting.risks.push(cleanBullet(line.replace(/^risk:/i, '')));
-    else if (/^question:/i.test(line) || section.includes('question')) meeting.questions.push(cleanBullet(line.replace(/^question:/i, '')));
-    else if (/^- \[[ xX]\]/.test(line) || /^action:/i.test(line) || section.includes('action')) meeting.actions.push(parseAction(line));
+    else if (/^decision:/i.test(line) || isSection(section, 'decision')) meeting.decisions.push(cleanBullet(line.replace(/^decision:/i, '')));
+    else if (/^risk:/i.test(line) || isSection(section, 'risk')) meeting.risks.push(cleanBullet(line.replace(/^risk:/i, '')));
+    else if (/^question:/i.test(line) || isSection(section, 'question')) meeting.questions.push(cleanBullet(line.replace(/^question:/i, '')));
+    else if (/^- \[[ xX]\]/.test(line) || /^action:/i.test(line) || isSection(section, 'action')) meeting.actions.push(parseAction(line));
     else meeting.notes.push(cleanBullet(line));
   }
   meeting.attendees = [...new Set(meeting.attendees)];
@@ -29,6 +29,16 @@ export function parseMeetingNotes(text) {
 
 function isAttendeeSection(section) {
   return /^(?:attendees?|participants?)$/.test(section);
+}
+
+function isSection(section, kind) {
+  const headings = {
+    decision: ['decision', 'decisions', 'key decisions'],
+    risk: ['risk', 'risks', 'key risks'],
+    question: ['question', 'questions', 'open questions'],
+    action: ['action', 'actions', 'action items']
+  };
+  return headings[kind].includes(section);
 }
 
 function cleanBullet(value) { return String(value || '').replace(/^[-*]\s*/, '').trim(); }
