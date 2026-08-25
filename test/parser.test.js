@@ -61,3 +61,50 @@ Attendees: Sam, Lee; Sam
   assert.deepEqual(meeting.questions, ['Is Friday still available?']);
   assert.deepEqual(meeting.notes, []);
 });
+
+test('does not classify headings by arbitrary substrings', () => {
+  const meeting = parseMeetingNotes(`# Review
+## Satisfaction
+- Scores improved
+## Risk appetite
+- Keep the current threshold
+## Questions afterward
+- Share the recording`);
+
+  assert.deepEqual(meeting.actions, []);
+  assert.deepEqual(meeting.risks, []);
+  assert.deepEqual(meeting.questions, []);
+  assert.deepEqual(meeting.notes, [
+    'Scores improved',
+    'Keep the current threshold',
+    'Share the recording'
+  ]);
+});
+
+test('routes every documented meeting section heading', () => {
+  const meeting = parseMeetingNotes(`# Review
+## Decision
+- Ship the change
+## Key Decisions
+- Retain the fallback
+## Risk
+- Schedule may slip
+## Key Risks
+- Vendor approval may slip
+## Question
+- Who signs off?
+## Open Questions
+- When is launch?
+## Action
+- Mina: send recap due tomorrow
+## Action Items
+- Jay: confirm scope due next week`);
+
+  assert.deepEqual(meeting.decisions, ['Ship the change', 'Retain the fallback']);
+  assert.deepEqual(meeting.risks, ['Schedule may slip', 'Vendor approval may slip']);
+  assert.deepEqual(meeting.questions, ['Who signs off?', 'When is launch?']);
+  assert.deepEqual(meeting.actions, [
+    { owner: 'Mina', task: 'send recap', due: 'tomorrow' },
+    { owner: 'Jay', task: 'confirm scope', due: 'next week' }
+  ]);
+});
