@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Parse action due clauses that appear before the owner or wrapped in
+  parentheses or brackets, removing the clause and its delimiters from the
+  task text.
+
 - Validate CLI option values before execution and report unreadable inputs
   without exposing Node.js stack traces.
 - Cover help, usage errors, input errors, plan formats, and validation exit
