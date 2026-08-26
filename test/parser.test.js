@@ -32,6 +32,16 @@ test('extracts the owner when a due clause precedes the owner colon', () => {
   assert.deepEqual(meeting.actions, [{ owner: 'Sam', task: 'send recap', due: 'tomorrow' }]);
 });
 
+test('removes parenthesized due clauses together with their delimiters', () => {
+  const meeting = parseMeetingNotes('# Sync\n## Actions\n- [ ] Mina: send recap (due tomorrow)');
+  assert.deepEqual(meeting.actions, [{ owner: 'Mina', task: 'send recap', due: 'tomorrow' }]);
+});
+
+test('removes bracket-wrapped due clauses together with their delimiters', () => {
+  const meeting = parseMeetingNotes('# Sync\n## Actions\n- [ ] Mina: send recap [due next week]');
+  assert.deepEqual(meeting.actions, [{ owner: 'Mina', task: 'send recap', due: 'next week' }]);
+});
+
 test('represents impossible calendar dates as missing', () => {
   const meeting = parseMeetingNotes('# Sync\n## Actions\n- Mina: send recap due 2026-02-29\n- Jay: review due 2026-13-01');
   assert.deepEqual(meeting.actions.map(action => action.due), [null, null]);
