@@ -43,19 +43,38 @@ function isSection(section, kind) {
 
 function cleanBullet(value) { return String(value || '').replace(/^[-*]\s*/, '').trim(); }
 
+const DUE_PATTERN = /\bdue[: ]+(\d{4}-\d{2}-\d{2}|next week|tomorrow|today)\b/i;
+
 export function parseAction(line) {
   const text = cleanBullet(String(line).replace(/^- \[[ xX]\]\s*/, '').replace(/^action:/i, ''));
-  const dueMatch = text.match(/\bdue[: ]+(\d{4}-\d{2}-\d{2}|next week|tomorrow|today)\b/i);
+  const dueMatch = text.match(DUE_PATTERN);
   const dueValue = dueMatch?.[1] || null;
   const due = dueValue && (!/^\d{4}-\d{2}-\d{2}$/.test(dueValue) || isCalendarDate(dueValue)) ? dueValue : null;
-  const ownerMatch = text.match(/^([^:]+):\s+(.+)$/);
+  const cleaned = due && dueMatch ? removeDueClause(text, dueMatch) : text;
+  const ownerMatch = cleaned.match(/^([^:]+):\s+(.+)$/);
   const owner = ownerMatch ? ownerMatch[1].trim() : null;
-  const taskText = ownerMatch ? ownerMatch[2] : text;
-  const taskDueMatch = taskText.match(/\bdue[: ]+(\d{4}-\d{2}-\d{2}|next week|tomorrow|today)\b/i);
-  const task = due && taskDueMatch
-    ? `${taskText.slice(0, taskDueMatch.index).trimEnd()} ${taskText.slice(taskDueMatch.index + taskDueMatch[0].length).trimStart()}`.trim()
-    : taskText.trim();
-  return { owner, task, due };
+  let taskText = ownerMatch ? ownerMatch[2] : cleaned;
+  const taskDueMatch = taskText.match(DUE_PATTERN);
+  if (due && taskDueMatch) taskText = removeDueClause(taskText, taskDueMatch);
+  return { owner, task: taskText.trim(), due };
+}
+
+function removeDueClause(text, dueMatch) {
+  const start = dueMatch.index;
+  const end = start + dueMatch[0].length;
+  const before = text[start - 1];
+  const after = text[end];
+  const wrapped = (before === '(' && after === ')') || (before === '[' && after === ']');
+  const from = wrapped ? start - 1 : start;
+  const to = wrapped ? end + 1 : end;
+  return `${text.slice(0, from)} ${text.slice(to)}`
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([,;:])/g, '$1')
+    .replace(/\(\s*\)/g, '')
+    .replace(/\[\s*\]/g, '')
+    .replace(/\s+[)\]]/g, '')
+    .replace(/[(\[]\s*$/g, '')
+    .trim();
 }
 
 function isCalendarDate(value) {
