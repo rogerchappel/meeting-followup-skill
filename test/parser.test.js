@@ -27,6 +27,11 @@ test('removes only the recognized due clause from task wording', () => {
   assert.deepEqual(meeting.actions, [{ owner: 'Mina', task: 'send recap after legal approval', due: 'tomorrow' }]);
 });
 
+test('extracts the owner when a due clause precedes the owner colon', () => {
+  const meeting = parseMeetingNotes('# Sync\n## Actions\n- [ ] Sam due tomorrow: send recap');
+  assert.deepEqual(meeting.actions, [{ owner: 'Sam', task: 'send recap', due: 'tomorrow' }]);
+});
+
 test('represents impossible calendar dates as missing', () => {
   const meeting = parseMeetingNotes('# Sync\n## Actions\n- Mina: send recap due 2026-02-29\n- Jay: review due 2026-13-01');
   assert.deepEqual(meeting.actions.map(action => action.due), [null, null]);
