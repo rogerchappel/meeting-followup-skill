@@ -69,7 +69,7 @@ their text contains a word fragment such as `action`.
 - Human review is required before sending or logging anything.
 
 ## Safety Notes
-The skill is intentionally dry-run only. Output that mentions sending email, posting, scheduling, or updating a CRM is an approval-gated recommendation, not an action.
+The skill is intentionally dry-run only. Action items that mention sending email, posting, scheduling, updating or writing to a CRM, or logging notes in a CRM are approval-gated recommendations, not actions. Ordinary discussion about a CRM does not create an approval finding unless the action uses one of those side-effect verbs.
 
 ## Package contents
 
