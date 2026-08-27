@@ -101,3 +101,11 @@ test('validates safe and blocked input with stable statuses', () => {
   assert.equal(blocked.status, 1);
   assert.equal(JSON.parse(blocked.stdout).status, 'blocked');
 });
+
+test('reports documented CRM write wording as approval-gated', () => {
+  for (const input of ['fixtures/crm-write-action.md', 'fixtures/crm-log-action.md']) {
+    const result = runCli('plan', '--input', input, '--format', 'json');
+    assert.equal(result.status, 0);
+    assert.ok(JSON.parse(result.stdout).safety.some(finding => finding.code === 'external-action'));
+  }
+});

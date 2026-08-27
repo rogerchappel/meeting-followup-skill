@@ -31,6 +31,18 @@ test('blocks secret-like input', () => {
   assert.ok(plan.safety.some(finding => finding.code === 'sensitive-token'));
 });
 
+test('approval-gates CRM write actions without flagging ordinary CRM discussion', () => {
+  for (const task of ['Log notes in CRM', 'Write to CRM']) {
+    const plan = createFollowupPlan(`# Sync\n## Actions\n- Sam: ${task} due tomorrow`);
+    assert.ok(plan.safety.some(finding => finding.code === 'external-action'));
+    assert.equal(plan.checklist.find(item => item.item.includes('CRM writes')).done, false);
+  }
+
+  const discussion = createFollowupPlan('# Sync\n## Actions\n- Sam: Discuss CRM reporting due tomorrow');
+  assert.ok(!discussion.safety.some(finding => finding.code === 'external-action'));
+  assert.equal(discussion.checklist.find(item => item.item.includes('CRM writes')).done, true);
+});
+
 test('formats markdown output', () => {
   const plan = createFollowupPlan(fs.readFileSync('fixtures/customer-sync.md', 'utf8'));
   assert.match(formatPlan(plan, 'md'), /## CRM Note/);
