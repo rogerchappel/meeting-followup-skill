@@ -5,7 +5,7 @@ const TOKEN_PATTERNS = [
   /\b(?:password|secret|api[_ -]?key)\s*[:=]/i
 ];
 
-const EXTERNAL_ACTIONS = /\b(send|email|post|publish|update crm|create ticket|invite|schedule|book)\b/i;
+const EXTERNAL_ACTIONS = /\b(?:send|email|post|publish|create ticket|invite|schedule|book|(?:update|write(?:\s+to)?)\s+(?:the\s+)?crm|log(?:\s+\w+){0,3}\s+in\s+(?:the\s+)?crm)\b/i;
 
 export function inspectSafety(meeting, sourceText = '') {
   const findings = [];
