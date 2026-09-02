@@ -20,7 +20,7 @@ export function parseMeetingNotes(text) {
     else if (/^decision:/i.test(line) || isSection(section, 'decision')) meeting.decisions.push(cleanBullet(line.replace(/^decision:/i, '')));
     else if (/^risk:/i.test(line) || isSection(section, 'risk')) meeting.risks.push(cleanBullet(line.replace(/^risk:/i, '')));
     else if (/^question:/i.test(line) || isSection(section, 'question')) meeting.questions.push(cleanBullet(line.replace(/^question:/i, '')));
-    else if (/^- \[[ xX]\]/.test(line) || /^action:/i.test(line) || isSection(section, 'action')) meeting.actions.push(parseAction(line));
+    else if (/^action:/i.test(line) || isSection(section, 'action')) meeting.actions.push(parseAction(line));
     else meeting.notes.push(cleanBullet(line));
   }
   meeting.attendees = [...new Set(meeting.attendees)];
