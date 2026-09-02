@@ -52,7 +52,9 @@ Meeting bullets are routed by explicit section headings. Supported headings
 are `Decision`, `Decisions`, and `Key Decisions`; `Risk`, `Risks`, and
 `Key Risks`; `Question`, `Questions`, and `Open Questions`; and `Action`,
 `Actions`, and `Action Items`. Other headings remain ordinary notes even when
-their text contains a word fragment such as `action`.
+their text contains a word fragment such as `action` or their bullets use
+checked or unchecked Markdown checkbox syntax. Checkbox bullets are parsed as
+actions only beneath a supported action heading.
 
 ## What It Produces
 - Follow-up email draft.
