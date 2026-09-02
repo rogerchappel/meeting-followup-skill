@@ -19,6 +19,16 @@ test('does not mark action readiness complete when no actions exist', () => {
   assert.equal(plan.checklist.find(item => item.item.includes('due dates')).done, false);
 });
 
+test('does not create action safety findings from unsupported-section checklists', () => {
+  const plan = createFollowupPlan(`# Weekly Sync
+## Checklist
+- [x] Confirm room booking
+- [ ] Read prework`);
+
+  assert.deepEqual(plan.meeting.actions, []);
+  assert.ok(!plan.safety.some(finding => ['missing-owner', 'missing-due-date'].includes(finding.code)));
+});
+
 test('treats an impossible action date as missing', () => {
   const plan = createFollowupPlan('# Sync\n## Actions\n- Mina: send recap due 2026-02-29');
   assert.equal(plan.meeting.actions[0].due, null);
