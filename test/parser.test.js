@@ -114,6 +114,29 @@ test('does not classify headings by arbitrary substrings', () => {
   ]);
 });
 
+test('keeps checked and unchecked checklist bullets as notes outside action sections', () => {
+  const meeting = parseMeetingNotes(`# Weekly Sync
+## Checklist
+- [x] Confirm room booking
+- [ ] Read prework`);
+
+  assert.deepEqual(meeting.actions, []);
+  assert.deepEqual(meeting.notes, ['[x] Confirm room booking', '[ ] Read prework']);
+});
+
+test('parses checked and unchecked checklist bullets inside documented action sections', () => {
+  const meeting = parseMeetingNotes(`# Weekly Sync
+## Actions
+- [x] Mina: send recap due tomorrow
+## Action Items
+- [ ] Jay: confirm scope due next week`);
+
+  assert.deepEqual(meeting.actions, [
+    { owner: 'Mina', task: 'send recap', due: 'tomorrow' },
+    { owner: 'Jay', task: 'confirm scope', due: 'next week' }
+  ]);
+});
+
 test('routes every documented meeting section heading', () => {
   const meeting = parseMeetingNotes(`# Review
 ## Decision
