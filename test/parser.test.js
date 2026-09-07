@@ -95,6 +95,34 @@ Attendees: Sam, Lee; Sam
   assert.deepEqual(meeting.notes, []);
 });
 
+test('deduplicates attendees case-insensitively while preserving first spelling', () => {
+  const meeting = parseMeetingNotes(`# Planning
+Attendees: Mina, mina
+## Participants
+- MINA
+- Jay`);
+
+  assert.deepEqual(meeting.attendees, ['Mina', 'Jay']);
+});
+
+test('parses only Markdown bullets beneath action headings', () => {
+  const meeting = parseMeetingNotes(`# Review
+## Actions
+No actions assigned.
+- Mina: send recap due tomorrow
+* Jay: review notes due next week
+- [x] Mina: confirm delivery due today
+- [ ] Jay: archive notes due 2026-09-08`);
+
+  assert.deepEqual(meeting.notes, ['No actions assigned.']);
+  assert.deepEqual(meeting.actions, [
+    { owner: 'Mina', task: 'send recap', due: 'tomorrow' },
+    { owner: 'Jay', task: 'review notes', due: 'next week' },
+    { owner: 'Mina', task: 'confirm delivery', due: 'today' },
+    { owner: 'Jay', task: 'archive notes', due: '2026-09-08' }
+  ]);
+});
+
 test('does not classify headings by arbitrary substrings', () => {
   const meeting = parseMeetingNotes(`# Review
 ## Satisfaction

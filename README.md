@@ -44,17 +44,18 @@ const plan = createFollowupPlan(notesText);
 
 The parser accepts comma- or semicolon-separated inline attendee fields such
 as `Attendees: Mina, Jay`, and Markdown bullets beneath an `Attendees` or
-`Participants` heading. Repeated names are included once. Starting another
-heading ends the attendee section, so later decisions and actions retain their
-own classifications.
+`Participants` heading. Repeated names are matched case-insensitively and
+included once using their first spelling. Starting another heading ends the
+attendee section, so later decisions and actions retain their own classifications.
 
 Meeting bullets are routed by explicit section headings. Supported headings
 are `Decision`, `Decisions`, and `Key Decisions`; `Risk`, `Risks`, and
 `Key Risks`; `Question`, `Questions`, and `Open Questions`; and `Action`,
 `Actions`, and `Action Items`. Other headings remain ordinary notes even when
 their text contains a word fragment such as `action` or their bullets use
-checked or unchecked Markdown checkbox syntax. Checkbox bullets are parsed as
-actions only beneath a supported action heading.
+checked or unchecked Markdown checkbox syntax. Beneath a supported action
+heading, `-` and `*` bullets (including checked and unchecked checkboxes) are
+parsed as actions; ordinary prose is preserved as a meeting note.
 
 ## What It Produces
 - Follow-up email draft.

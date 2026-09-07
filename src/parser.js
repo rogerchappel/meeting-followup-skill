@@ -20,11 +20,25 @@ export function parseMeetingNotes(text) {
     else if (/^decision:/i.test(line) || isSection(section, 'decision')) meeting.decisions.push(cleanBullet(line.replace(/^decision:/i, '')));
     else if (/^risk:/i.test(line) || isSection(section, 'risk')) meeting.risks.push(cleanBullet(line.replace(/^risk:/i, '')));
     else if (/^question:/i.test(line) || isSection(section, 'question')) meeting.questions.push(cleanBullet(line.replace(/^question:/i, '')));
-    else if (/^action:/i.test(line) || isSection(section, 'action')) meeting.actions.push(parseAction(line));
+    else if (/^action:/i.test(line) || (isSection(section, 'action') && isMarkdownBullet(line))) meeting.actions.push(parseAction(line));
     else meeting.notes.push(cleanBullet(line));
   }
-  meeting.attendees = [...new Set(meeting.attendees)];
+  meeting.attendees = deduplicateAttendees(meeting.attendees);
   return meeting;
+}
+
+function isMarkdownBullet(line) {
+  return /^[-*]\s+/.test(line);
+}
+
+function deduplicateAttendees(attendees) {
+  const seen = new Set();
+  return attendees.filter(attendee => {
+    const identity = attendee.toLocaleLowerCase('en-US');
+    if (seen.has(identity)) return false;
+    seen.add(identity);
+    return true;
+  });
 }
 
 function isAttendeeSection(section) {
