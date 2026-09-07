@@ -92,6 +92,22 @@ test('includes attendee section bullets in JSON and Markdown plans', () => {
   assert.match(markdown.stdout, /Attendees: Sam, Lee, Priya/);
 });
 
+test('collapses mixed-case attendees in JSON, greeting, and CRM output', () => {
+  const json = runCli('plan', '--input', 'fixtures/mixed-case-attendees.md', '--format', 'json');
+  assert.equal(json.status, 0);
+  const plan = JSON.parse(json.stdout);
+  assert.deepEqual(plan.meeting.attendees, ['Mina', 'Jay']);
+  assert.match(plan.followup, /^Hi Mina, Jay,/);
+  assert.match(plan.crmNote, /^Meeting: Case Review\nAttendees: Mina, Jay$/m);
+  assert.deepEqual(plan.meeting.notes, ['No actions assigned.']);
+
+  const markdown = runCli('plan', '--input', 'fixtures/mixed-case-attendees.md', '--format', 'md');
+  assert.equal(markdown.status, 0);
+  assert.match(markdown.stdout, /Hi Mina, Jay,/);
+  assert.match(markdown.stdout, /Attendees: Mina, Jay/);
+  assert.doesNotMatch(markdown.stdout, /Hi Mina, mina/);
+});
+
 test('validates safe and blocked input with stable statuses', () => {
   const safe = runCli('validate', '--input', 'fixtures/customer-sync.md');
   assert.equal(safe.status, 0);
