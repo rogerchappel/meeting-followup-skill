@@ -193,6 +193,42 @@ test('routes every documented meeting section heading', () => {
   ]);
 });
 
+test('routes supported sections across valid ATX heading forms', () => {
+  const meeting = parseMeetingNotes(`# Review
+#### Attendees ####
+- Mina
+##### Participants ##
+- Jay
+###### Decisions ######
+- Ship the change
+#### Risks ###
+- Schedule may slip
+##### Questions #
+- Who signs off?
+###### Actions ###
+- Mina: send recap due tomorrow`);
+
+  assert.deepEqual(meeting.attendees, ['Mina', 'Jay']);
+  assert.deepEqual(meeting.decisions, ['Ship the change']);
+  assert.deepEqual(meeting.risks, ['Schedule may slip']);
+  assert.deepEqual(meeting.questions, ['Who signs off?']);
+  assert.deepEqual(meeting.actions, [
+    { owner: 'Mina', task: 'send recap', due: 'tomorrow' }
+  ]);
+});
+
+test('keeps substring ATX headings and their bullets as notes', () => {
+  const meeting = parseMeetingNotes(`# Review
+#### Actions afterward ####
+- Share the recording
+##### Participant notes ##
+- Mina joined late`);
+
+  assert.deepEqual(meeting.actions, []);
+  assert.deepEqual(meeting.attendees, []);
+  assert.deepEqual(meeting.notes, ['Share the recording', 'Mina joined late']);
+});
+
 test('requires Markdown bullets beneath decision risk and question headings', () => {
   const meeting = parseMeetingNotes(`# Review
 ## Decisions
