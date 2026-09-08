@@ -92,6 +92,22 @@ test('includes attendee section bullets in JSON and Markdown plans', () => {
   assert.match(markdown.stdout, /Attendees: Sam, Lee, Priya/);
 });
 
+test('retains section prose as meeting notes in JSON and Markdown plans', () => {
+  const json = runCli('plan', '--input', 'fixtures/section-prose.md', '--format', 'json');
+  assert.equal(json.status, 0);
+  assert.deepEqual(JSON.parse(json.stdout).meeting.notes, [
+    'Context only, not a decision.',
+    'Discussion only, not a risk.',
+    'Background only, not a question.'
+  ]);
+
+  const markdown = runCli('plan', '--input', 'fixtures/section-prose.md', '--format', 'md');
+  assert.equal(markdown.status, 0);
+  assert.match(markdown.stdout, /Context only, not a decision\./);
+  assert.match(markdown.stdout, /Discussion only, not a risk\./);
+  assert.match(markdown.stdout, /Background only, not a question\./);
+});
+
 test('collapses mixed-case attendees in JSON, greeting, and CRM output', () => {
   const json = runCli('plan', '--input', 'fixtures/mixed-case-attendees.md', '--format', 'json');
   assert.equal(json.status, 0);
