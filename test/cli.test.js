@@ -92,6 +92,20 @@ test('includes attendee section bullets in JSON and Markdown plans', () => {
   assert.match(markdown.stdout, /Attendees: Sam, Lee, Priya/);
 });
 
+test('routes closed H4-H6 section headings through the CLI', () => {
+  const result = runCli('plan', '--input', 'fixtures/atx-sections.md', '--format', 'json');
+  assert.equal(result.status, 0);
+  const meeting = JSON.parse(result.stdout).meeting;
+
+  assert.deepEqual(meeting.attendees, ['Mina']);
+  assert.deepEqual(meeting.decisions, ['Ship the change']);
+  assert.deepEqual(meeting.risks, ['Schedule may slip']);
+  assert.deepEqual(meeting.questions, ['Who signs off?']);
+  assert.deepEqual(meeting.actions, [
+    { owner: 'Mina', task: 'send recap', due: 'tomorrow' }
+  ]);
+});
+
 test('retains section prose as meeting notes in JSON and Markdown plans', () => {
   const json = runCli('plan', '--input', 'fixtures/section-prose.md', '--format', 'json');
   assert.equal(json.status, 0);
