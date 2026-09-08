@@ -5,9 +5,9 @@ export function parseMeetingNotes(text) {
   for (const raw of lines) {
     const line = raw.trim();
     if (!line) continue;
-    const heading = line.match(/^#{1,3}\s+(.*)$/);
+    const heading = line.match(/^#{1,6}(?:[ \t]+|$)(.*)$/);
     if (heading) {
-      const label = heading[1].trim();
+      const label = heading[1].replace(/[ \t]+#+[ \t]*$/, '').trim();
       if (meeting.title === 'Untitled meeting') meeting.title = label;
       section = label.toLowerCase();
       continue;
