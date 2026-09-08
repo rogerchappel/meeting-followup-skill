@@ -192,3 +192,37 @@ test('routes every documented meeting section heading', () => {
     { owner: 'Jay', task: 'confirm scope', due: 'next week' }
   ]);
 });
+
+test('requires Markdown bullets beneath decision risk and question headings', () => {
+  const meeting = parseMeetingNotes(`# Review
+## Decisions
+Context only, not a decision.
+- Ship the change
+## Key Risks
+Discussion only, not a risk.
+* Schedule may slip
+## Open Questions
+Background only, not a question.
+- Who signs off?`);
+
+  assert.deepEqual(meeting.decisions, ['Ship the change']);
+  assert.deepEqual(meeting.risks, ['Schedule may slip']);
+  assert.deepEqual(meeting.questions, ['Who signs off?']);
+  assert.deepEqual(meeting.notes, [
+    'Context only, not a decision.',
+    'Discussion only, not a risk.',
+    'Background only, not a question.'
+  ]);
+});
+
+test('recognizes explicit decision risk and question lines outside sections', () => {
+  const meeting = parseMeetingNotes(`# Review
+Decision: Ship the change
+Risk: Schedule may slip
+Question: Who signs off?`);
+
+  assert.deepEqual(meeting.decisions, ['Ship the change']);
+  assert.deepEqual(meeting.risks, ['Schedule may slip']);
+  assert.deepEqual(meeting.questions, ['Who signs off?']);
+  assert.deepEqual(meeting.notes, []);
+});
