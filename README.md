@@ -53,9 +53,11 @@ are `Decision`, `Decisions`, and `Key Decisions`; `Risk`, `Risks`, and
 `Key Risks`; `Question`, `Questions`, and `Open Questions`; and `Action`,
 `Actions`, and `Action Items`. Other headings remain ordinary notes even when
 their text contains a word fragment such as `action` or their bullets use
-checked or unchecked Markdown checkbox syntax. Beneath a supported action
-heading, `-` and `*` bullets (including checked and unchecked checkboxes) are
-parsed as actions; ordinary prose is preserved as a meeting note.
+checked or unchecked Markdown checkbox syntax. Beneath every supported
+heading, only `-` and `*` bullets are routed to that section; ordinary prose is
+preserved as a meeting note and included in JSON and Markdown plans. Explicit
+`Decision:`, `Risk:`, `Question:`, and `Action:` lines remain supported without
+bullets. Action bullets may also be checked or unchecked checkboxes.
 
 ## What It Produces
 - Follow-up email draft.
