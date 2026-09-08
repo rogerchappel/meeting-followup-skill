@@ -17,9 +17,9 @@ export function parseMeetingNotes(text) {
       continue;
     }
     if (isAttendeeSection(section) && /^[-*]\s+/.test(line)) meeting.attendees.push(cleanBullet(line));
-    else if (/^decision:/i.test(line) || isSection(section, 'decision')) meeting.decisions.push(cleanBullet(line.replace(/^decision:/i, '')));
-    else if (/^risk:/i.test(line) || isSection(section, 'risk')) meeting.risks.push(cleanBullet(line.replace(/^risk:/i, '')));
-    else if (/^question:/i.test(line) || isSection(section, 'question')) meeting.questions.push(cleanBullet(line.replace(/^question:/i, '')));
+    else if (/^decision:/i.test(line) || (isSection(section, 'decision') && isMarkdownBullet(line))) meeting.decisions.push(cleanBullet(line.replace(/^decision:/i, '')));
+    else if (/^risk:/i.test(line) || (isSection(section, 'risk') && isMarkdownBullet(line))) meeting.risks.push(cleanBullet(line.replace(/^risk:/i, '')));
+    else if (/^question:/i.test(line) || (isSection(section, 'question') && isMarkdownBullet(line))) meeting.questions.push(cleanBullet(line.replace(/^question:/i, '')));
     else if (/^action:/i.test(line) || (isSection(section, 'action') && isMarkdownBullet(line))) meeting.actions.push(parseAction(line));
     else meeting.notes.push(cleanBullet(line));
   }
