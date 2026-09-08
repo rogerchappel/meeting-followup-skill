@@ -51,7 +51,8 @@ attendee section, so later decisions and actions retain their own classification
 Meeting bullets are routed by explicit section headings. Supported headings
 are `Decision`, `Decisions`, and `Key Decisions`; `Risk`, `Risks`, and
 `Key Risks`; `Question`, `Questions`, and `Open Questions`; and `Action`,
-`Actions`, and `Action Items`. Other headings remain ordinary notes even when
+`Actions`, and `Action Items`. These labels work at ATX heading levels 1–6,
+including headings with an optional closing `#` sequence. Other headings remain ordinary notes even when
 their text contains a word fragment such as `action` or their bullets use
 checked or unchecked Markdown checkbox syntax. Beneath every supported
 heading, only `-` and `*` bullets are routed to that section; ordinary prose is
