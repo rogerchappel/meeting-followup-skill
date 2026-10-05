@@ -26,11 +26,12 @@ package metadata and lockfile drift apart.
 meeting-followup-skill validate --input notes.md
 meeting-followup-skill plan --input notes.md --format json
 meeting-followup-skill plan --input notes.md --format md
+meeting-followup-skill plan --input notes.md --format calendar
 meeting-followup-skill --help
 ```
 
 `--input` requires a readable file. `--format` accepts `json` (the default) or
-`md`. Unknown options, extra positional arguments, and duplicate options are
+`md`, or `calendar`. The calendar format is a concise Markdown summary of the parsed attendees, decisions, action items (including owner and due-date status), risks, open questions, and draft/blocked review status. It uses the same input and heuristic parsing as the other formats; absent owners or due dates are labeled, and it performs no calendar integration or scheduling. Unknown options, extra positional arguments, and duplicate options are
 usage errors; the CLI rejects them instead of producing plan output. It exits
 with status 2 for command or option usage errors, 3 when the input cannot be
 read, and 1 when `validate` finds a blocker.
