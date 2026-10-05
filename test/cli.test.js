@@ -39,7 +39,7 @@ test('rejects missing and unsupported format values', () => {
 
   const unsupported = runCli('plan', '--input', 'fixtures/customer-sync.md', '--format', 'yaml');
   assert.equal(unsupported.status, 2);
-  assert.equal(unsupported.stderr, 'Unsupported format "yaml". Expected json or md.\n');
+  assert.equal(unsupported.stderr, 'Unsupported format "yaml". Expected json, md, or calendar.\n');
 });
 
 test('rejects unknown options and stray positional arguments without plan output', () => {
@@ -136,6 +136,19 @@ test('collapses mixed-case attendees in JSON, greeting, and CRM output', () => {
   assert.match(markdown.stdout, /Hi Mina, Jay,/);
   assert.match(markdown.stdout, /Attendees: Mina, Jay/);
   assert.doesNotMatch(markdown.stdout, /Hi Mina, mina/);
+});
+
+test('renders calendar summaries with fixture-backed attendees, decisions, actions, risks, and questions', () => {
+  const result = runCli('plan', '--input', 'fixtures/calendar-summary.md', '--format', 'calendar');
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /^# Quarterly Planning — Calendar Summary/m);
+  assert.match(result.stdout, /Attendees: Mina, Lee/);
+  assert.match(result.stdout, /- Keep the launch date unchanged/);
+  assert.match(result.stdout, /- book the review room \(owner: Mina; due: 2026-10-12\)/);
+  assert.match(result.stdout, /- Confirm staffing plan \(owner: unassigned; due: unscheduled\)/);
+  assert.match(result.stdout, /- Vendor response may slip/);
+  assert.match(result.stdout, /- Who owns the final review\?/);
 });
 
 test('validates safe and blocked input with stable statuses', () => {

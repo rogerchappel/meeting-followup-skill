@@ -36,7 +36,7 @@ const parseOptions = values => {
 };
 
 if (command === 'help' || args.includes('--help')) {
-  console.log('Usage: meeting-followup-skill plan --input notes.md [--format json|md]');
+  console.log('Usage: meeting-followup-skill plan --input notes.md [--format json|md|calendar]');
   process.exit(0);
 }
 
@@ -51,8 +51,8 @@ if (!input) {
 }
 
 const format = options.get('--format') || 'json';
-if (format !== 'json' && format !== 'md') {
-  failUsage(`Unsupported format "${format}". Expected json or md.`);
+if (format !== 'json' && format !== 'md' && format !== 'calendar') {
+  failUsage(`Unsupported format "${format}". Expected json, md, or calendar.`);
 }
 
 let text;
