@@ -1,5 +1,14 @@
-export function parseMeetingNotes(text) {
+const DEFAULT_VOCABULARY = {
+  attendees: ['attendee', 'attendees', 'participant', 'participants'],
+  decisions: ['decision', 'decisions', 'key decisions'],
+  risks: ['risk', 'risks', 'key risks'],
+  questions: ['question', 'questions', 'open questions'],
+  actions: ['action', 'actions', 'action items']
+};
+
+export function parseMeetingNotes(text, options = {}) {
   const lines = String(text || '').split(/\r?\n/);
+  const vocabulary = normalizeVocabulary(options.vocabulary);
   const meeting = { title: 'Untitled meeting', attendees: [], decisions: [], risks: [], questions: [], actions: [], notes: [] };
   let section = '';
   for (const raw of lines) {
@@ -9,18 +18,19 @@ export function parseMeetingNotes(text) {
     if (heading) {
       const label = heading[1].replace(/[ \t]+#+[ \t]*$/, '').trim();
       if (meeting.title === 'Untitled meeting') meeting.title = label;
-      section = label.toLowerCase();
+      section = label.toLocaleLowerCase('en-US');
       continue;
     }
-    if (/^(?:attendees?|participants?):/i.test(line)) {
-      meeting.attendees.push(...line.replace(/^(?:attendees?|participants?):/i, '').split(/[,;]/).map(x => x.trim()).filter(Boolean));
+    const attendeeLabel = matchLabel(line, vocabulary.attendees);
+    if (attendeeLabel) {
+      meeting.attendees.push(...line.slice(attendeeLabel.length + 1).split(/[,;]/).map(x => x.trim()).filter(Boolean));
       continue;
     }
-    if (isAttendeeSection(section) && /^[-*]\s+/.test(line)) meeting.attendees.push(cleanBullet(line));
-    else if (/^decision:/i.test(line) || (isSection(section, 'decision') && isMarkdownBullet(line))) meeting.decisions.push(cleanBullet(line.replace(/^decision:/i, '')));
-    else if (/^risk:/i.test(line) || (isSection(section, 'risk') && isMarkdownBullet(line))) meeting.risks.push(cleanBullet(line.replace(/^risk:/i, '')));
-    else if (/^question:/i.test(line) || (isSection(section, 'question') && isMarkdownBullet(line))) meeting.questions.push(cleanBullet(line.replace(/^question:/i, '')));
-    else if (/^action:/i.test(line) || (isSection(section, 'action') && isMarkdownBullet(line))) meeting.actions.push(parseAction(line));
+    if (matchesSection(section, vocabulary.attendees) && /^[-*]\s+/.test(line)) meeting.attendees.push(cleanBullet(line));
+    else if (matchesLabel(line, vocabulary.decisions) || (matchesSection(section, vocabulary.decisions) && isMarkdownBullet(line))) meeting.decisions.push(cleanBullet(stripLabel(line, vocabulary.decisions)));
+    else if (matchesLabel(line, vocabulary.risks) || (matchesSection(section, vocabulary.risks) && isMarkdownBullet(line))) meeting.risks.push(cleanBullet(stripLabel(line, vocabulary.risks)));
+    else if (matchesLabel(line, vocabulary.questions) || (matchesSection(section, vocabulary.questions) && isMarkdownBullet(line))) meeting.questions.push(cleanBullet(stripLabel(line, vocabulary.questions)));
+    else if (matchesLabel(line, vocabulary.actions) || (matchesSection(section, vocabulary.actions) && isMarkdownBullet(line))) meeting.actions.push(parseAction(stripLabel(line, vocabulary.actions)));
     else meeting.notes.push(cleanBullet(line));
   }
   meeting.attendees = deduplicateAttendees(meeting.attendees);
@@ -41,18 +51,28 @@ function deduplicateAttendees(attendees) {
   });
 }
 
-function isAttendeeSection(section) {
-  return /^(?:attendees?|participants?)$/.test(section);
+function normalizeVocabulary(custom = {}) {
+  return Object.fromEntries(Object.entries(DEFAULT_VOCABULARY).map(([kind, defaults]) => {
+    const supplied = custom[kind];
+    const values = supplied === undefined ? defaults : Array.isArray(supplied) ? supplied : [supplied];
+    if (!values.every(value => typeof value === 'string' && value.trim())) {
+      throw new TypeError(`Vocabulary for ${kind} must contain non-empty strings.`);
+    }
+    return [kind, [...new Set([...defaults, ...values.map(value => value.trim().toLocaleLowerCase('en-US'))])]];
+  }));
 }
 
-function isSection(section, kind) {
-  const headings = {
-    decision: ['decision', 'decisions', 'key decisions'],
-    risk: ['risk', 'risks', 'key risks'],
-    question: ['question', 'questions', 'open questions'],
-    action: ['action', 'actions', 'action items']
-  };
-  return headings[kind].includes(section);
+function matchesSection(section, terms) { return terms.includes(section); }
+
+function matchLabel(line, terms) {
+  const match = line.match(/^([^:]+):/);
+  return match && terms.includes(match[1].trim().toLocaleLowerCase('en-US')) ? match[1] : null;
+}
+
+function matchesLabel(line, terms) { return Boolean(matchLabel(line, terms)); }
+function stripLabel(line, terms) {
+  const label = matchLabel(line, terms);
+  return label ? line.slice(label.length + 1) : line;
 }
 
 function cleanBullet(value) { return String(value || '').replace(/^[-*]\s*/, '').trim(); }

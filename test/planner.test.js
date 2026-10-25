@@ -53,6 +53,25 @@ test('approval-gates CRM write actions without flagging ordinary CRM discussion'
   assert.equal(discussion.checklist.find(item => item.item.includes('CRM writes')).done, true);
 });
 
+test('supports additive organization vocabulary deterministically', () => {
+  const notes = `# Sync\n## Outcomes\n- Decision: retain the customer\n## Owners\n- Sam\n## Next steps\n- Alex: prepare summary due tomorrow`;
+  const defaults = createFollowupPlan(notes);
+  assert.deepEqual(defaults.meeting.decisions, []);
+  assert.deepEqual(defaults.meeting.attendees, []);
+  assert.deepEqual(defaults.meeting.actions, []);
+
+  const vocabulary = { decisions: ['outcomes'], attendees: ['owners'], actions: ['next steps'] };
+  const configured = createFollowupPlan(notes, { vocabulary, now: '2026-01-01T00:00:00.000Z' });
+  assert.deepEqual(configured.meeting.decisions, ['Decision: retain the customer']);
+  assert.deepEqual(configured.meeting.attendees, ['Sam']);
+  assert.deepEqual(configured.meeting.actions, [{ owner: 'Alex', task: 'prepare summary', due: 'tomorrow' }]);
+  assert.deepEqual(createFollowupPlan(notes, { vocabulary }).meeting, configured.meeting);
+});
+
+test('rejects invalid organization vocabulary', () => {
+  assert.throws(() => createFollowupPlan('# Sync', { vocabulary: { actions: [''] } }), /non-empty strings/);
+});
+
 test('formats markdown output', () => {
   const plan = createFollowupPlan(fs.readFileSync('fixtures/customer-sync.md', 'utf8'));
   assert.match(formatPlan(plan, 'md'), /## CRM Note/);
