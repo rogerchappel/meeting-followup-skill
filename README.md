@@ -43,6 +43,18 @@ import { createFollowupPlan } from 'meeting-followup-skill';
 const plan = createFollowupPlan(notesText);
 ```
 
+Organization-specific section headings and inline labels can be added without
+replacing the built-in vocabulary. Supply arrays under `attendees`,
+`decisions`, `risks`, `questions`, or `actions`; each term is recognized as a
+heading and as an inline `Term: value` label. Defaults remain active, terms are
+matched case-insensitively, and results retain input order.
+
+```js
+const plan = createFollowupPlan(notesText, {
+  vocabulary: { decisions: ['Outcomes'], actions: ['Next steps'] }
+});
+```
+
 The parser accepts comma- or semicolon-separated inline attendee fields such
 as `Attendees: Mina, Jay`, and Markdown bullets beneath an `Attendees` or
 `Participants` heading. Repeated names are matched case-insensitively and
