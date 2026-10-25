@@ -2,7 +2,7 @@ import { parseMeetingNotes } from './parser.js';
 import { inspectSafety, hasBlockers } from './safety.js';
 
 export function createFollowupPlan(text, options = {}) {
-  const meeting = parseMeetingNotes(text);
+  const meeting = parseMeetingNotes(text, { vocabulary: options.vocabulary });
   const safety = inspectSafety(meeting, text);
   return {
     title: meeting.title,
