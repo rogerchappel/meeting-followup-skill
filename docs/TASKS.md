@@ -8,5 +8,4 @@
 - Fixture-backed tests and smoke command.
 
 ## Next
-- Add configurable organization vocabulary.
 - Add export templates for common CRM note styles.
