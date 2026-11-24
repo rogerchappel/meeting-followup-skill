@@ -11,7 +11,7 @@ ship
 
 ## Verification
 - npm test
-- npm run check
+- npm run release:check
 - npm run build
 - npm run smoke
 - bash scripts/validate.sh
