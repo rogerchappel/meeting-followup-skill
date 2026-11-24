@@ -8,7 +8,6 @@ Local-first CLI and library for converting meeting notes into safe follow-up dra
 npm ci
 npm test
 npm run check
-npm run lint
 npm run build
 npm run smoke
 npm run package:smoke
@@ -99,6 +98,3 @@ Run `npm run package:smoke` before publishing to confirm the CLI, runtime
 modules, fixtures, and public support files are present in the tarball and
 that both the package-root library import and installed CLI work in a clean
 consumer project.
-
-`npm run lint` is the stable contributor alias for the release gate's static
-package checks.
